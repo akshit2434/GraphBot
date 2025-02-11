@@ -9,6 +9,8 @@ This project is actively being developed and is not yet complete. It serves as a
 ### Upcoming Features
 
 - [ ] Chat and Context Management
+- [ ] Store images with code metadata in context
+- [ ] Properly display observation tables
 - [ ] Image Processing Capabilities
 - [ ] Table Data Editing Feature
 - [ ] User Authentication and Login System

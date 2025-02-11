@@ -1,0 +1,337 @@
+2025-02-11 15:21:13,197 [INFO] Starting server...
+2025-02-11 15:21:13,242 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2025-02-11 15:21:13,243 [INFO] [33mPress CTRL+C to quit[0m
+2025-02-11 15:21:13,245 [INFO]  * Restarting with stat
+2025-02-11 15:21:15,424 [INFO] Starting server...
+2025-02-11 15:21:15,465 [WARNING]  * Debugger is active!
+2025-02-11 15:21:15,469 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 15:21:21,053 [INFO] 127.0.0.1 - - [11/Feb/2025 15:21:21] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:21:21,323 [INFO] Request 20250211_152121_323514: Received new request
+2025-02-11 15:21:21,326 [INFO] Request 20250211_152121_323514: Processing query: retry
+2025-02-11 15:21:22,525 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:21:23,842 [INFO] Request 20250211_152121_323514: Successfully processed request
+2025-02-11 15:21:23,844 [INFO] 127.0.0.1 - - [11/Feb/2025 15:21:23] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:21:36,781 [INFO] 127.0.0.1 - - [11/Feb/2025 15:21:36] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:21:37,093 [INFO] Request 20250211_152137_093696: Received new request
+2025-02-11 15:21:37,093 [INFO] Request 20250211_152137_093696: Processing query: plot the points (1,1) (3,9) (4,5), and on the same graph, plot y=sin(cos(x) and y=x^2. in dark theme
+2025-02-11 15:21:37,097 [INFO] Retrying request to /chat/completions in 0.382500 seconds
+2025-02-11 15:21:38,492 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:21:40,217 [INFO] Request 20250211_152137_093696: Generating graph 2
+2025-02-11 15:21:40,217 [INFO] Generating graph for query: Create a graph with the points (1,1), (3,9), (4,5), the line y=x^2 andthe line y=sin(cos(x)) in a dark theme
+2025-02-11 15:21:40,562 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:21:44,292 [INFO] Successfully generated graph with ID: 9oIOd-WRP8mw9QQ7
+2025-02-11 15:21:44,292 [INFO] Request 20250211_152137_093696: Successfully processed request
+2025-02-11 15:21:44,294 [INFO] 127.0.0.1 - - [11/Feb/2025 15:21:44] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:21:44,610 [INFO] Serving graph image: 9oIOd-WRP8mw9QQ7
+2025-02-11 15:21:44,618 [INFO] 127.0.0.1 - - [11/Feb/2025 15:21:44] "GET /generated_graphs/9oIOd-WRP8mw9QQ7.png HTTP/1.1" 200 -
+2025-02-11 15:22:01,263 [INFO] 127.0.0.1 - - [11/Feb/2025 15:22:01] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:22:01,586 [INFO] Request 20250211_152201_586579: Received new request
+2025-02-11 15:22:01,587 [INFO] Request 20250211_152201_586579: Processing query: use better colours
+2025-02-11 15:22:01,591 [INFO] Retrying request to /chat/completions in 0.384607 seconds
+2025-02-11 15:22:02,776 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:22:05,058 [INFO] Request 20250211_152201_586579: Successfully processed request
+2025-02-11 15:22:05,062 [INFO] 127.0.0.1 - - [11/Feb/2025 15:22:05] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:22:12,509 [INFO] 127.0.0.1 - - [11/Feb/2025 15:22:12] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:22:12,822 [INFO] Request 20250211_152212_822096: Received new request
+2025-02-11 15:22:12,822 [INFO] Request 20250211_152212_822096: Processing query: regenerate same graph
+2025-02-11 15:22:12,825 [INFO] Retrying request to /chat/completions in 0.459152 seconds
+2025-02-11 15:22:14,096 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:22:15,277 [INFO] Request 20250211_152212_822096: Successfully processed request
+2025-02-11 15:22:15,278 [INFO] 127.0.0.1 - - [11/Feb/2025 15:22:15] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:22:35,361 [INFO] 127.0.0.1 - - [11/Feb/2025 15:22:35] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:22:35,674 [INFO] Request 20250211_152235_674778: Received new request
+2025-02-11 15:22:35,675 [INFO] Request 20250211_152235_674778: Processing query: a 3d spiral graph
+2025-02-11 15:22:35,679 [INFO] Retrying request to /chat/completions in 0.444150 seconds
+2025-02-11 15:22:37,330 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:22:39,186 [INFO] Request 20250211_152235_674778: Successfully processed request
+2025-02-11 15:22:39,187 [INFO] 127.0.0.1 - - [11/Feb/2025 15:22:39] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:23:06,059 [INFO] 127.0.0.1 - - [11/Feb/2025 15:23:06] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:23:06,364 [INFO] Request 20250211_152306_364277: Received new request
+2025-02-11 15:23:06,365 [INFO] Request 20250211_152306_364277: Processing query: make a 3d spiral graph that looks cool. idc about the details
+2025-02-11 15:23:06,369 [INFO] Retrying request to /chat/completions in 0.391487 seconds
+2025-02-11 15:23:07,545 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:23:09,026 [INFO] Request 20250211_152306_364277: Generating graph 2
+2025-02-11 15:23:09,026 [INFO] Generating graph for query: Create a 3D spiral graph with a visually appealing color gradient and a dynamic spiral shape. The specific data points and axes labels are not important. The goal is to create a cool-looking spiral visualization.
+2025-02-11 15:23:09,372 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:26:41,566 [INFO] Starting server with Agg backend...
+2025-02-11 15:26:41,617 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2025-02-11 15:26:41,617 [INFO] [33mPress CTRL+C to quit[0m
+2025-02-11 15:26:41,620 [INFO]  * Restarting with stat
+2025-02-11 15:26:44,169 [INFO] Starting server with Agg backend...
+2025-02-11 15:26:44,232 [WARNING]  * Debugger is active!
+2025-02-11 15:26:44,238 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 15:26:51,742 [INFO] 127.0.0.1 - - [11/Feb/2025 15:26:51] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:26:52,011 [INFO] Request 20250211_152652_011874: Received new request
+2025-02-11 15:26:52,011 [INFO] Request 20250211_152652_011874: Processing query: make a 3d spiral graph that looks cool. idc about the details
+2025-02-11 15:26:52,994 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:26:54,408 [INFO] Request 20250211_152652_011874: Generating graph 2
+2025-02-11 15:26:54,408 [INFO] Generating graph for query: Create a 3D spiral graph with a visually appealing color scheme and no specific axis labels or data details.
+2025-02-11 15:26:54,773 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:26:58,092 [ERROR] Error executing graph code: name 'fig' is not defined
+Traceback (most recent call last):
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\main.py", line 157, in generate_graph
+    exec(generated_code, namespace)
+  File "<string>", line 11, in <module>
+NameError: name 'fig' is not defined
+
+2025-02-11 15:26:58,092 [ERROR] Request 20250211_152652_011874: Failed to generate graph: Failed to generate graph: name 'fig' is not defined
+2025-02-11 15:26:58,092 [INFO] Request 20250211_152652_011874: Successfully processed request
+2025-02-11 15:26:58,093 [INFO] 127.0.0.1 - - [11/Feb/2025 15:26:58] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:29:09,833 [INFO]  * Detected change in 'C:\\Users\\akshi\\OneDrive\\Documents\\Projects\\OpenSource\\GraphBot\\backend\\main.py', reloading
+2025-02-11 15:29:10,100 [INFO]  * Restarting with stat
+2025-02-11 15:29:12,549 [INFO] Starting server with Agg backend...
+2025-02-11 15:29:12,585 [WARNING]  * Debugger is active!
+2025-02-11 15:29:12,588 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 15:29:19,171 [INFO] 127.0.0.1 - - [11/Feb/2025 15:29:19] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:29:19,445 [INFO] Request 20250211_152919_445747: Received new request
+2025-02-11 15:29:19,446 [INFO] Request 20250211_152919_445747: Processing query: make a 3d spiral graph that looks cool. idc about the details
+2025-02-11 15:29:20,446 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:29:21,698 [INFO] Request 20250211_152919_445747: Generating graph 2
+2025-02-11 15:29:21,698 [INFO] Generating graph for query: Create a 3D spiral graph
+2025-02-11 15:29:22,073 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:29:24,586 [ERROR] Error executing graph code: gca() got an unexpected keyword argument 'projection'
+Traceback (most recent call last):
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\main.py", line 168, in generate_graph
+    exec(generated_code, namespace)
+  File "<string>", line 5, in <module>
+TypeError: gca() got an unexpected keyword argument 'projection'
+
+2025-02-11 15:29:24,586 [ERROR] Request 20250211_152919_445747: Failed to generate graph: Failed to generate graph: gca() got an unexpected keyword argument 'projection'
+2025-02-11 15:29:24,586 [INFO] Request 20250211_152919_445747: Successfully processed request
+2025-02-11 15:29:24,588 [INFO] 127.0.0.1 - - [11/Feb/2025 15:29:24] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:30:40,654 [INFO]  * Detected change in 'C:\\Users\\akshi\\OneDrive\\Documents\\Projects\\OpenSource\\GraphBot\\backend\\main.py', reloading
+2025-02-11 15:30:40,889 [INFO]  * Restarting with stat
+2025-02-11 15:30:43,162 [INFO] Starting server with Agg backend...
+2025-02-11 15:30:43,198 [WARNING]  * Debugger is active!
+2025-02-11 15:30:43,203 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 15:30:56,180 [INFO]  * Detected change in 'C:\\Users\\akshi\\OneDrive\\Documents\\Projects\\OpenSource\\GraphBot\\backend\\main.py', reloading
+2025-02-11 15:30:56,402 [INFO]  * Restarting with stat
+2025-02-11 15:30:58,682 [INFO] Starting server with Agg backend...
+2025-02-11 15:30:58,715 [WARNING]  * Debugger is active!
+2025-02-11 15:30:58,719 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 15:31:24,226 [INFO] 127.0.0.1 - - [11/Feb/2025 15:31:24] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:31:24,493 [INFO] Request 20250211_153124_493751: Received new request
+2025-02-11 15:31:24,493 [INFO] Request 20250211_153124_493751: Processing query: make a 3d spiral graph that looks cool. idc about the details
+2025-02-11 15:31:25,459 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:31:27,760 [INFO] Request 20250211_153124_493751: Generating graph 2
+2025-02-11 15:31:27,760 [INFO] Generating graph for query: Create a 3D spiral graph with a color gradient. The spiral should have several rotations and be visually appealing.
+2025-02-11 15:31:28,122 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:31:31,617 [ERROR] Error executing graph code: 'Axes' object has no attribute 'set_zlabel'
+Traceback (most recent call last):
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\main.py", line 178, in generate_graph
+    exec(generated_code, namespace)
+  File "<string>", line 28, in <module>
+AttributeError: 'Axes' object has no attribute 'set_zlabel'. Did you mean: 'set_label'?
+
+2025-02-11 15:31:31,618 [ERROR] Request 20250211_153124_493751: Failed to generate graph: Failed to generate graph: 'Axes' object has no attribute 'set_zlabel'
+2025-02-11 15:31:31,618 [INFO] Request 20250211_153124_493751: Successfully processed request
+2025-02-11 15:31:31,620 [INFO] 127.0.0.1 - - [11/Feb/2025 15:31:31] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:32:02,059 [INFO]  * Detected change in 'C:\\Users\\akshi\\OneDrive\\Documents\\Projects\\OpenSource\\GraphBot\\backend\\main.py', reloading
+2025-02-11 15:32:02,315 [INFO]  * Restarting with stat
+2025-02-11 15:32:04,581 [INFO] Starting server with Agg backend...
+2025-02-11 15:32:04,617 [WARNING]  * Debugger is active!
+2025-02-11 15:32:04,621 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 15:32:12,242 [INFO]  * Detected change in 'C:\\Users\\akshi\\OneDrive\\Documents\\Projects\\OpenSource\\GraphBot\\backend\\main.py', reloading
+2025-02-11 15:32:12,469 [INFO]  * Restarting with stat
+2025-02-11 15:32:14,711 [INFO] Starting server with Agg backend...
+2025-02-11 15:32:14,746 [WARNING]  * Debugger is active!
+2025-02-11 15:32:14,750 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 15:35:29,082 [INFO] 127.0.0.1 - - [11/Feb/2025 15:35:29] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:35:29,350 [INFO] Request 20250211_153529_350010: Received new request
+2025-02-11 15:35:29,350 [INFO] Request 20250211_153529_350010: Processing query: make a 3d spiral graph that looks cool. idc about the details
+2025-02-11 15:35:30,348 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:35:31,881 [INFO] Request 20250211_153529_350010: Generating graph 2
+2025-02-11 15:35:31,882 [INFO] Generating graph for query: Create a 3D spiral graph with a cool color scheme
+2025-02-11 15:35:32,263 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:35:34,905 [ERROR] Error executing graph code: gca() got an unexpected keyword argument 'projection'
+Traceback (most recent call last):
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\main.py", line 187, in generate_graph
+    exec(generated_code, namespace)
+  File "<string>", line 3, in <module>
+TypeError: gca() got an unexpected keyword argument 'projection'
+
+2025-02-11 15:35:34,905 [ERROR] Request 20250211_153529_350010: Failed to generate graph: Failed to generate graph: gca() got an unexpected keyword argument 'projection'
+2025-02-11 15:35:34,905 [INFO] Request 20250211_153529_350010: Successfully processed request
+2025-02-11 15:35:34,907 [INFO] 127.0.0.1 - - [11/Feb/2025 15:35:34] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:36:09,603 [INFO] 127.0.0.1 - - [11/Feb/2025 15:36:09] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:36:09,909 [INFO] Request 20250211_153609_909551: Received new request
+2025-02-11 15:36:09,909 [INFO] Request 20250211_153609_909551: Processing query: make a 2d spiral graph that looks cool. idc about the details
+2025-02-11 15:36:09,914 [INFO] Retrying request to /chat/completions in 0.386721 seconds
+2025-02-11 15:36:11,106 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:36:12,436 [INFO] Request 20250211_153609_909551: Generating graph 2
+2025-02-11 15:36:12,436 [INFO] Generating graph for query: Create a 2D spiral graph. The graph should be visually appealing and not based on specific data.
+2025-02-11 15:36:12,811 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:36:16,135 [INFO] Successfully generated graph with ID: AtacAZIQBpwwZW4N
+2025-02-11 15:36:16,136 [INFO] Request 20250211_153609_909551: Successfully processed request
+2025-02-11 15:36:16,137 [INFO] 127.0.0.1 - - [11/Feb/2025 15:36:16] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:36:16,466 [INFO] Serving graph image: AtacAZIQBpwwZW4N
+2025-02-11 15:36:16,474 [INFO] 127.0.0.1 - - [11/Feb/2025 15:36:16] "GET /generated_graphs/AtacAZIQBpwwZW4N.png HTTP/1.1" 200 -
+2025-02-11 15:37:24,994 [INFO]  * Detected change in 'C:\\Users\\akshi\\OneDrive\\Documents\\Projects\\OpenSource\\GraphBot\\backend\\main.py', reloading
+2025-02-11 15:37:25,286 [INFO]  * Restarting with stat
+2025-02-11 15:39:21,569 [INFO] Starting server with Agg backend...
+2025-02-11 15:39:21,615 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2025-02-11 15:39:21,615 [INFO] [33mPress CTRL+C to quit[0m
+2025-02-11 15:39:21,617 [INFO]  * Restarting with stat
+2025-02-11 15:39:24,123 [INFO] Starting server with Agg backend...
+2025-02-11 15:39:24,155 [WARNING]  * Debugger is active!
+2025-02-11 15:39:24,158 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 15:39:25,891 [INFO] 127.0.0.1 - - [11/Feb/2025 15:39:25] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:39:26,161 [INFO] Request 20250211_153926_161595: Received new request
+2025-02-11 15:39:26,162 [INFO] Request 20250211_153926_161595: Processing query: make a 2d spiral graph that looks cool. idc about the details
+2025-02-11 15:39:27,184 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:39:28,461 [INFO] Request 20250211_153926_161595: Generating graph 2
+2025-02-11 15:39:28,462 [INFO] Generating graph for query: Create a 2D spiral graph
+2025-02-11 15:39:28,843 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:39:30,878 [INFO] Successfully generated graph with ID: OPRwztBFrMjrQ2GA
+2025-02-11 15:39:30,878 [INFO] Request 20250211_153926_161595: Successfully processed request
+2025-02-11 15:39:30,880 [INFO] 127.0.0.1 - - [11/Feb/2025 15:39:30] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:39:31,204 [INFO] Serving graph image: OPRwztBFrMjrQ2GA
+2025-02-11 15:39:31,213 [INFO] 127.0.0.1 - - [11/Feb/2025 15:39:31] "GET /generated_graphs/OPRwztBFrMjrQ2GA.png HTTP/1.1" 200 -
+2025-02-11 15:39:38,668 [INFO] 127.0.0.1 - - [11/Feb/2025 15:39:38] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:39:38,977 [INFO] Request 20250211_153938_977115: Received new request
+2025-02-11 15:39:38,978 [INFO] Request 20250211_153938_977115: Processing query: make a 3d spiral graph that looks cool. idc about the details
+2025-02-11 15:39:38,984 [INFO] Retrying request to /chat/completions in 0.378789 seconds
+2025-02-11 15:39:40,186 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:39:41,435 [INFO] Request 20250211_153938_977115: Generating graph 2
+2025-02-11 15:39:41,435 [INFO] Generating graph for query: Create a 3D spiral graph
+2025-02-11 15:39:41,800 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:39:44,882 [INFO] Successfully generated graph with ID: 7BjYiEzCAbaVBphR
+2025-02-11 15:39:44,882 [INFO] Request 20250211_153938_977115: Successfully processed request
+2025-02-11 15:39:44,884 [INFO] 127.0.0.1 - - [11/Feb/2025 15:39:44] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:39:44,906 [INFO] Serving graph image: 7BjYiEzCAbaVBphR
+2025-02-11 15:39:44,919 [INFO] 127.0.0.1 - - [11/Feb/2025 15:39:44] "GET /generated_graphs/7BjYiEzCAbaVBphR.png HTTP/1.1" 200 -
+2025-02-11 15:40:14,880 [INFO] 127.0.0.1 - - [11/Feb/2025 15:40:14] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:40:15,203 [INFO] Request 20250211_154015_203907: Received new request
+2025-02-11 15:40:15,203 [INFO] Request 20250211_154015_203907: Processing query: show me a graph of cycloid
+2025-02-11 15:40:15,207 [INFO] Retrying request to /chat/completions in 0.402802 seconds
+2025-02-11 15:40:16,155 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:40:17,838 [INFO] Request 20250211_154015_203907: Generating graph 2
+2025-02-11 15:40:17,838 [INFO] Generating graph for query: Create a cycloid graph.
+2025-02-11 15:40:18,215 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:40:21,500 [INFO] Successfully generated graph with ID: ZuVOxVZG_0HCCnVE
+2025-02-11 15:40:21,500 [INFO] Request 20250211_154015_203907: Successfully processed request
+2025-02-11 15:40:21,501 [INFO] 127.0.0.1 - - [11/Feb/2025 15:40:21] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:40:21,818 [INFO] Serving graph image: ZuVOxVZG_0HCCnVE
+2025-02-11 15:40:21,825 [INFO] 127.0.0.1 - - [11/Feb/2025 15:40:21] "GET /generated_graphs/ZuVOxVZG_0HCCnVE.png HTTP/1.1" 200 -
+2025-02-11 15:41:13,395 [INFO] 127.0.0.1 - - [11/Feb/2025 15:41:13] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:41:13,706 [INFO] Request 20250211_154113_706785: Received new request
+2025-02-11 15:41:13,706 [INFO] Request 20250211_154113_706785: Processing query: show graph of sin^-1
+2025-02-11 15:41:13,710 [INFO] Retrying request to /chat/completions in 0.459842 seconds
+2025-02-11 15:41:15,008 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:41:16,459 [INFO] Request 20250211_154113_706785: Generating graph 2
+2025-02-11 15:41:16,460 [INFO] Generating graph for query: Create a line graph of arcsin(x) from -1 to 1
+2025-02-11 15:41:16,819 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:41:19,345 [INFO] Successfully generated graph with ID: z0S2owfArdHbJmd4
+2025-02-11 15:41:19,345 [INFO] Request 20250211_154113_706785: Successfully processed request
+2025-02-11 15:41:19,346 [INFO] 127.0.0.1 - - [11/Feb/2025 15:41:19] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:41:19,367 [INFO] Serving graph image: z0S2owfArdHbJmd4
+2025-02-11 15:41:19,375 [INFO] 127.0.0.1 - - [11/Feb/2025 15:41:19] "GET /generated_graphs/z0S2owfArdHbJmd4.png HTTP/1.1" 200 -
+2025-02-11 15:41:51,407 [INFO] 127.0.0.1 - - [11/Feb/2025 15:41:51] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:41:51,717 [INFO] Request 20250211_154151_717475: Received new request
+2025-02-11 15:41:51,717 [INFO] Request 20250211_154151_717475: Processing query: give me a cool 3d graph, any, idc about detail
+2025-02-11 15:41:51,721 [INFO] Retrying request to /chat/completions in 0.485985 seconds
+2025-02-11 15:41:53,041 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:41:54,529 [INFO] Request 20250211_154151_717475: Generating graph 2
+2025-02-11 15:41:54,529 [INFO] Generating graph for query: Create a 3D bar chart with random data for x, y, and z axes
+2025-02-11 15:41:54,932 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:41:59,811 [ERROR] Error executing graph code: shape mismatch: objects cannot be broadcast to a single shape.  Mismatch is between arg 0 with shape (10,) and arg 2 with shape (100,).
+Traceback (most recent call last):
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\main.py", line 197, in generate_graph
+    exec(generated_code, namespace)
+  File "<string>", line 23, in <module>
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\venv\Lib\site-packages\matplotlib\__init__.py", line 1521, in inner
+    return func(
+           ^^^^^
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\venv\Lib\site-packages\mpl_toolkits\mplot3d\axes3d.py", line 3103, in bar3d
+    x, y, z, dx, dy, dz = np.broadcast_arrays(
+                          ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\venv\Lib\site-packages\numpy\lib\stride_tricks.py", line 540, in broadcast_arrays
+    shape = _broadcast_shape(*args)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\akshi\OneDrive\Documents\Projects\OpenSource\GraphBot\backend\venv\Lib\site-packages\numpy\lib\stride_tricks.py", line 422, in _broadcast_shape
+    b = np.broadcast(*args[:32])
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: shape mismatch: objects cannot be broadcast to a single shape.  Mismatch is between arg 0 with shape (10,) and arg 2 with shape (100,).
+
+2025-02-11 15:41:59,812 [ERROR] Request 20250211_154151_717475: Failed to generate graph: Failed to generate graph: shape mismatch: objects cannot be broadcast to a single shape.  Mismatch is between arg 0 with shape (10,) and arg 2 with shape (100,).
+2025-02-11 15:41:59,812 [INFO] Request 20250211_154151_717475: Successfully processed request
+2025-02-11 15:41:59,814 [INFO] 127.0.0.1 - - [11/Feb/2025 15:41:59] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:42:17,940 [INFO] 127.0.0.1 - - [11/Feb/2025 15:42:17] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:42:18,257 [INFO] Request 20250211_154218_257368: Received new request
+2025-02-11 15:42:18,257 [INFO] Request 20250211_154218_257368: Processing query: give me a cool and colorful but simple 3d graph, any, idc about detail
+2025-02-11 15:42:18,262 [INFO] Retrying request to /chat/completions in 0.378563 seconds
+2025-02-11 15:42:19,521 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:42:20,962 [INFO] Request 20250211_154218_257368: Generating graph 2
+2025-02-11 15:42:20,962 [INFO] Generating graph for query: Create a 3D bar chart with random data and vibrant colors. The data is a random array of integers, and the chart should have a simple layout for ease of understanding.
+2025-02-11 15:42:21,365 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:42:25,876 [INFO] Successfully generated graph with ID: BvcfwOB1LuDMnWL-
+2025-02-11 15:42:25,876 [INFO] Request 20250211_154218_257368: Successfully processed request
+2025-02-11 15:42:25,878 [INFO] 127.0.0.1 - - [11/Feb/2025 15:42:25] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:42:26,200 [INFO] Serving graph image: BvcfwOB1LuDMnWL-
+2025-02-11 15:42:26,208 [INFO] 127.0.0.1 - - [11/Feb/2025 15:42:26] "GET /generated_graphs/BvcfwOB1LuDMnWL-.png HTTP/1.1" 200 -
+2025-02-11 15:42:56,166 [INFO] 127.0.0.1 - - [11/Feb/2025 15:42:56] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:42:56,489 [INFO] Request 20250211_154256_489678: Received new request
+2025-02-11 15:42:56,490 [INFO] Request 20250211_154256_489678: Processing query: hello bhai kaise ho
+2025-02-11 15:42:56,495 [INFO] Retrying request to /chat/completions in 0.486324 seconds
+2025-02-11 15:42:57,757 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:42:59,440 [INFO] Request 20250211_154256_489678: Successfully processed request
+2025-02-11 15:42:59,442 [INFO] 127.0.0.1 - - [11/Feb/2025 15:42:59] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 15:43:09,803 [INFO] 127.0.0.1 - - [11/Feb/2025 15:43:09] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 15:43:10,131 [INFO] Request 20250211_154310_131614: Received new request
+2025-02-11 15:43:10,131 [INFO] Request 20250211_154310_131614: Processing query: tum kyakya kr skte ho
+2025-02-11 15:43:10,135 [INFO] Retrying request to /chat/completions in 0.441817 seconds
+2025-02-11 15:43:11,773 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 15:43:14,024 [INFO] Request 20250211_154310_131614: Successfully processed request
+2025-02-11 15:43:14,026 [INFO] 127.0.0.1 - - [11/Feb/2025 15:43:14] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 16:00:28,861 [INFO] 127.0.0.1 - - [11/Feb/2025 16:00:28] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 16:00:29,126 [INFO] Request 20250211_160029_126942: Received new request
+2025-02-11 16:00:29,126 [INFO] Request 20250211_160029_126942: Processing query: Hey what is a graph and types of it
+2025-02-11 16:00:29,132 [INFO] Retrying request to /chat/completions in 0.417768 seconds
+2025-02-11 16:00:30,403 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 16:00:33,894 [INFO] Request 20250211_160029_126942: Successfully processed request
+2025-02-11 16:00:33,895 [INFO] 127.0.0.1 - - [11/Feb/2025 16:00:33] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 16:01:33,813 [INFO] 127.0.0.1 - - [11/Feb/2025 16:01:33] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 16:01:34,061 [INFO] Request 20250211_160134_061221: Received new request
+2025-02-11 16:01:34,061 [INFO] Request 20250211_160134_061221: Processing query: what are the types of 3d graphs
+2025-02-11 16:01:34,065 [INFO] Retrying request to /chat/completions in 0.440816 seconds
+2025-02-11 16:01:35,323 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 16:01:38,662 [INFO] Request 20250211_160134_061221: Successfully processed request
+2025-02-11 16:01:38,663 [INFO] 127.0.0.1 - - [11/Feb/2025 16:01:38] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 16:07:37,248 [INFO] Starting server with Agg backend...
+2025-02-11 16:07:37,301 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2025-02-11 16:07:37,301 [INFO] [33mPress CTRL+C to quit[0m
+2025-02-11 16:07:37,303 [INFO]  * Restarting with stat
+2025-02-11 16:07:39,680 [INFO] Starting server with Agg backend...
+2025-02-11 16:07:39,727 [WARNING]  * Debugger is active!
+2025-02-11 16:07:39,735 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 16:11:34,565 [INFO] Starting server with Agg backend...
+2025-02-11 16:11:34,615 [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5001
+2025-02-11 16:11:34,615 [INFO] [33mPress CTRL+C to quit[0m
+2025-02-11 16:11:34,616 [INFO]  * Restarting with stat
+2025-02-11 16:11:37,055 [INFO] Starting server with Agg backend...
+2025-02-11 16:11:37,109 [WARNING]  * Debugger is active!
+2025-02-11 16:11:37,115 [INFO]  * Debugger PIN: 396-224-730
+2025-02-11 16:11:41,063 [INFO] 127.0.0.1 - - [11/Feb/2025 16:11:41] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 16:11:41,313 [INFO] Request 20250211_161141_313188: Received new request
+2025-02-11 16:11:41,313 [INFO] Request 20250211_161141_313188: Processing query: hi
+2025-02-11 16:11:42,303 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 16:11:43,919 [INFO] Request 20250211_161141_313188: Successfully processed request
+2025-02-11 16:11:43,920 [INFO] 127.0.0.1 - - [11/Feb/2025 16:11:43] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 16:11:54,307 [INFO] 127.0.0.1 - - [11/Feb/2025 16:11:54] "OPTIONS /generate_response HTTP/1.1" 200 -
+2025-02-11 16:11:54,618 [INFO] Request 20250211_161154_618729: Received new request
+2025-02-11 16:11:54,618 [INFO] Request 20250211_161154_618729: Processing query: plot sinx^2
+2025-02-11 16:11:54,623 [INFO] Retrying request to /chat/completions in 0.445010 seconds
+2025-02-11 16:11:55,882 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 16:11:57,336 [INFO] Request 20250211_161154_618729: Generating graph 2
+2025-02-11 16:11:57,336 [INFO] Generating graph for query: Create a line graph of sin(x^2) for x ranging from -5 to 5.
+2025-02-11 16:11:57,727 [INFO] HTTP Request: POST https://openrouter.ai/api/v1/chat/completions "HTTP/1.1 200 OK"
+2025-02-11 16:12:01,303 [INFO] Successfully generated graph with ID: 0NejIH3MSPzTqTxD
+2025-02-11 16:12:01,303 [INFO] Request 20250211_161154_618729: Successfully processed request
+2025-02-11 16:12:01,304 [INFO] 127.0.0.1 - - [11/Feb/2025 16:12:01] "POST /generate_response HTTP/1.1" 200 -
+2025-02-11 16:12:01,626 [INFO] Serving graph image: 0NejIH3MSPzTqTxD
+2025-02-11 16:12:01,634 [INFO] 127.0.0.1 - - [11/Feb/2025 16:12:01] "GET /generated_graphs/0NejIH3MSPzTqTxD.png HTTP/1.1" 200 -

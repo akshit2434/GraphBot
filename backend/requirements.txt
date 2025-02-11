@@ -1,0 +1,7 @@
+pydantic-ai
+pydantic
+python-dotenv
+matplotlib
+numpy
+Flask
+flask-cors

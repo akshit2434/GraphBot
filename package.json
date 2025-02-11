@@ -1,0 +1,13 @@
+{
+    "name": "graphbot-root",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "frontend": "cd graphbot && yarn start",
+        "backend": "cd backend && python main.py",
+        "dev": "concurrently \"yarn run frontend\" \"yarn run backend\""
+    },
+    "dependencies": {
+        "concurrently": "^8.2.2"
+    }
+}

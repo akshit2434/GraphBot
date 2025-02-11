@@ -7,15 +7,67 @@ from flask_cors import CORS
 from datetime import datetime
 import traceback
 import os
+import dotenv
+from pydantic_ai import Agent, RunContext
+from pydantic_ai.models.openai import OpenAIModel
 
 from logger_config import logger
 from models import BotResponse, MessagePart
-from graph_generator import generate_graph
-from response_parser import parse_response
-from agent_config import main_agent
+from helper import generateGraph
+
+# Load environment variables
+dotenv.load_dotenv()
+
+# Configure OpenAI models
+model = OpenAIModel(
+    os.getenv('CHAT_MODEL'),
+    base_url='https://openrouter.ai/api/v1',
+    api_key=os.getenv('OPENROUTER_API_KEY'),
+)
+
+graph_model = OpenAIModel(
+    os.getenv('CODE_MODEL'),
+    base_url='https://openrouter.ai/api/v1',
+    api_key=os.getenv('OPENROUTER_API_KEY'),
+)
+
+# Create the chat agent
+chat_agent = Agent(
+    model,
+    system_prompt=(
+        "You are a helpful AI assistant called GraphBot that can generate graphs and provide textual responses. "
+        "Not every response needs a graph - only generate graphs when they add value to the response. "
+        "When a graph is appropriate, call the tool 'generate_graph_tool' to generate it and embed the result using "
+        "the format <image>imageID</image>."
+    ),
+)
+
+# Create the graph agent for code generation
+graph_agent = Agent(
+    graph_model,
+    system_prompt=(
+        "You are a Python code generator for matplotlib graphs. Generate clean, minimal code that: "
+        "1. Uses only matplotlib.pyplot and numpy; "
+        "2. Sets appropriate labels and titles; "
+        "3. Uses a clear style and color scheme; "
+        "4. Uses the current axes (plt.gca()) for all plotting; "
+        "5. Does NOT create or close figures; "
+        "6. Properly scales axes and sets limits; "
+        "7. For 3D plots, use methods like plot3D(), scatter3D(), or set_zlabel() directly; "
+        "8. For polar plots, use polar-specific methods without setting projection."
+    )
+)
 
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+# Register graph generation tool with chat agent
+@chat_agent.tool
+async def generate_graph_tool(ctx: RunContext[str], query: str, data: dict = None) -> dict:
+    logger.info(f"Generating graph with query: {query}")
+    result = await generateGraph(query, data)
+    logger.info(f"Graph generation result: {result}")
+    return result
 
 @app.route('/generate_response', methods=['POST'])
 async def generate_response_api():
@@ -30,28 +82,27 @@ async def generate_response_api():
     logger.info(f"Request {req_id}: Processing query: {query}")
     
     try:
-        # Get response from main agent
-        response = await main_agent.run(query)
-        parsed_parts = parse_response(response.data)
+        # Get response from chat agent
+        response = await chat_agent.run(query)
+        response_text = response.data
         
-        # Process each part and replace graph descriptions with actual graph IDs
+        # Parse <image> tags to extract graph IDs
         result_parts = []
-        for idx, part in enumerate(parsed_parts):
-            try:
-                if part.type == 'text':
-                    result_parts.append(part)
-                else:  # type == 'graph'
-                    logger.info(f"Request {req_id}: Generating graph {idx+1}")
-                    graph_response = await generate_graph(part.content)
-                    if graph_response.success:
-                        result_parts.append(MessagePart(type='graph', content=graph_response.image_id))
-                    else:
-                        error_msg = f"Failed to generate graph: {graph_response.error}"
-                        logger.error(f"Request {req_id}: {error_msg}")
-                        result_parts.append(MessagePart(type='text', content=error_msg))
-            except Exception as e:
-                logger.error(f"Request {req_id}: Error processing part {idx}: {str(e)}")
-                result_parts.append(MessagePart(type='text', content=f"Error: {str(e)}"))
+        text_parts = response_text.split('<image>')
+        
+        # Handle first text part
+        if text_parts[0]:
+            result_parts.append(MessagePart(type='text', content=text_parts[0]))
+        
+        # Handle remaining parts (alternating between graph and text)
+        for part in text_parts[1:]:
+            if '</image>' in part:
+                graph_id, remaining_text = part.split('</image>', 1)
+                result_parts.append(MessagePart(type='graph', content=graph_id))
+                if remaining_text:
+                    result_parts.append(MessagePart(type='text', content=remaining_text))
+            else:
+                result_parts.append(MessagePart(type='text', content=part))
         
         logger.info(f"Request {req_id}: Successfully processed request")
         return jsonify(BotResponse(success=True, messages=result_parts).dict())

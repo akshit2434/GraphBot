@@ -15,10 +15,13 @@ node_modules
 # misc
 .DS_Store
 graphbot/.env*
+
+#backend
 backend/.env*
 backend/venv
 backend/__pycache__
 backend/generated_graphs
+backend/server.log
 
 npm-debug.log*
 yarn-debug.log*

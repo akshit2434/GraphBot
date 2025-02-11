@@ -6,7 +6,9 @@ import re
 import logging
 from models import GraphResponse
 
+
 logger = logging.getLogger(__name__)
+
 
 def sanitize_code(code: str) -> str:
     """Sanitize and validate the generated Python code"""
@@ -32,15 +34,17 @@ def sanitize_code(code: str) -> str:
         logger.error(f"Code sanitization failed: {str(e)}")
         raise
 
-async def generate_graph(query: str) -> GraphResponse:
-    """Generate a graph based on the query"""
-    logger.info(f"Generating graph for query: {query}")
-    
+async def generateGraph(query, data):
     fig = None
     try:
+        print(f"Generating graph for query: {query}")
         # Generate matplotlib code based on query
-        prompt = f"Create a matplotlib graph for: {query}. Return only the Python code."
-        from agent_config import graph_agent
+        prompt = f"Create a matplotlib graph for: {query}."
+        if data:
+            prompt += f" Data: {data}"
+        prompt += " Return only the Python code with no additional statements or other info."
+        
+        from main2 import graph_agent
         response = await graph_agent.run(prompt)
         generated_code = response.data.strip()
 
@@ -48,8 +52,6 @@ async def generate_graph(query: str) -> GraphResponse:
         generated_code = re.sub(r'^```[a-zA-Z]*\n*', '', generated_code)
         generated_code = re.sub(r'\n*```$', '', generated_code)
         generated_code = generated_code.strip()
-
-        logger.debug(f"Generated code:\n{generated_code}")
 
         # Validate and sanitize the code
         generated_code = sanitize_code(generated_code)
@@ -103,11 +105,11 @@ async def generate_graph(query: str) -> GraphResponse:
             return GraphResponse(success=True, image_id=image_id)
             
         except Exception as e:
-            logger.error(f"Error executing graph code: {str(e)}\n{traceback.format_exc()}")
+            logger.error(f"Error executing graph code: {str(e)}")
             return GraphResponse(success=False, error=f"Failed to generate graph: {str(e)}")
 
     except Exception as e:
-        logger.error(f"Error in graph generation: {str(e)}\n{traceback.format_exc()}")
+        logger.error(f"Error in graph generation: {str(e)}")
         return GraphResponse(success=False, error=str(e))
         
     finally:

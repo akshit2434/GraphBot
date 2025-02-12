@@ -34,17 +34,19 @@ def sanitize_code(code: str) -> str:
         logger.error(f"Code sanitization failed: {str(e)}")
         raise
 
-async def generateGraph(query, data):
+async def generateGraph(query,style, data):
     fig = None
     try:
         print(f"Generating graph for query: {query}")
         # Generate matplotlib code based on query
         prompt = f"Create a matplotlib graph for: {query}."
         if data:
-            prompt += f" Data: {data}"
-        prompt += " Return only the Python code with no additional statements or other info."
+            prompt += f"\nData: {data}"
+        if style:
+            prompt += f"\nStyle: {style}"
+        prompt += "\nReturn only the Python code with no additional statements or other info. Ensure the labels are visible properly and not overlapping. Make code minimal with no unnecessary lines."
         
-        from main2 import graph_agent
+        from main import graph_agent
         response = await graph_agent.run(prompt)
         generated_code = response.data.strip()
 

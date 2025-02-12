@@ -37,8 +37,8 @@ chat_agent = Agent(
     system_prompt=(
         "You are a helpful AI assistant called GraphBot that can generate graphs and provide textual responses. "
         "Not every response needs a graph - only generate graphs when they add value to the response. "
-        "When a graph is appropriate, call the tool 'generate_graph_tool' to generate it and embed the result using "
-        "the format <image>imageID</image>."
+        "When a graph is appropriate (2d or 3d), call the tool 'generate_graph_tool' to generate it. "
+        "To respond with any image, mention it using the format <image>imageID</image> in the text response."
     ),
 )
 
@@ -63,9 +63,21 @@ CORS(app)  # Enable CORS for all routes
 
 # Register graph generation tool with chat agent
 @chat_agent.tool
-async def generate_graph_tool(ctx: RunContext[str], query: str, data: dict = None) -> dict:
+async def generate_graph_tool(ctx: RunContext[str], query: str, style:str = None, data: dict = None) -> dict:
+    """
+    This tool can generate all kinds of 2D and 3D graphs using matplotlib. It takes the following arguments:
+    
+    Args:
+        query (str): A description of the graph to be generated.
+        style (str, optional): The style of the graph to be generated.
+        data (dict, optional): Additional data required for generating the graph.
+    
+    Returns:
+        dict: A dictionary containing the result of the graph generation, including the path to the generated graph image. (Ex. {success: True, image_id: 'image_id'}, {success: False, error: 'error_message'})
+    """
+    
     logger.info(f"Generating graph with query: {query}")
-    result = await generateGraph(query, data)
+    result = await generateGraph(query, style, data)
     logger.info(f"Graph generation result: {result}")
     return result
 
@@ -114,7 +126,7 @@ async def generate_response_api():
             success=False,
             messages=[MessagePart(type='text', content=error_msg)],
             error=str(e)
-        ).dict()), 500
+        ).model_dump()), 500
 
 @app.route('/generated_graphs/<image_id>.png')
 def get_graph_image(image_id):

@@ -37,7 +37,7 @@ chat_agent = Agent(
     system_prompt=(
         "You are a helpful AI assistant called GraphBot that can generate graphs and provide textual responses. "
         "Not every response needs a graph - only generate graphs when they add value to the response. "
-        "When a graph is appropriate (2d or 3d), call the tool 'generate_graph_tool' to generate it. "
+        "You can only respond in textual format and dont have the ability to generate images yourself. Use suitable tools for generating whatever is required. "
         "To respond with any image, mention it using the format <image>imageID</image> in the text response."
     ),
 )
@@ -47,7 +47,7 @@ graph_agent = Agent(
     graph_model,
     system_prompt=(
         "You are a Python code generator for matplotlib graphs. Generate clean, minimal code that: "
-        "1. Uses only matplotlib.pyplot and numpy; "
+        "1. Supported librarier: matplotlib; numpy; You cannot import or use any other libraries; "
         "2. Sets appropriate labels and titles; "
         "3. Uses a clear style and color scheme; "
         "4. Uses the current axes (plt.gca()) for all plotting; "
@@ -55,6 +55,7 @@ graph_agent = Agent(
         "6. Properly scales axes and sets limits; "
         "7. For 3D plots, use methods like plot3D(), scatter3D(), or set_zlabel() directly; "
         "8. For polar plots, use polar-specific methods without setting projection."
+        "\nReturn only the Python code with no additional statements or other info. Ensure the labels are visible properly and not overlapping. Make code minimal with no unnecessary lines."
     )
 )
 
@@ -65,6 +66,7 @@ CORS(app)  # Enable CORS for all routes
 @chat_agent.tool
 async def generate_graph_tool(ctx: RunContext[str], query: str, style:str = None, data: dict = None) -> dict:
     """
+    Even if the query is vague, if the user is asking for a graph regardless, this can generate a graph. "
     This tool can generate all kinds of 2D and 3D graphs using matplotlib. It takes the following arguments:
     
     Args:

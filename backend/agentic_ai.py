@@ -92,6 +92,14 @@ def generate_system_prompt(prompt, tool_instructions: str = None):
         - A system prompt string with tool instructions.
     """
     tool_instructions = tool_instructions or generate_tool_instructions()
+    if not tool_instructions or len(tool_instructions) == 0:
+        system_prompt = f"{prompt}\n\n"
+        """
+        \nTo respond to the user, provide the text response in the following format:
+        {
+            "text": "Your response goes here."
+        }\n
+        """
     system_prompt = (
         prompt + "\n\n" +
         f"{tool_instructions}\n\n"
@@ -165,12 +173,12 @@ async def call_tool(tool_name: str, args: dict) -> dict:
         result = await tool_func(**args)
         if "success" not in result or result["success"] == False:
             return result
-        else:
-            {
-                "success": True,
-                "tool_name": tool_name,
-                "output": json.dumps(result)
-            }
+        
+        return {
+            "success": True,
+            "tool_name": tool_name,
+            "output": json.dumps(result)
+        }
     except Exception as e:
         return {
             "success": False,
@@ -245,17 +253,18 @@ def append_to_history(role: str, content: dict | str, history: list) -> list:
     
     return history
     
-def initialize_message_history(system_prompt: str) -> list:
+def initialize_message_history(system_prompt: str, tool_instructions:str = None) -> list:
     """
     Initialize the message history with a system prompt.
 
     Parameters:
       system_prompt: The initial system prompt.
+      tool_instructions: Formatted tool descriptions. (optional
 
     Returns:
       A list containing the initial system prompt.
     """
-    return [{"role": "system", "content": generate_system_prompt(system_prompt)}]
+    return [{"role": "system", "content": generate_system_prompt(system_prompt, tool_instructions)}]
 
 async def generate_response(client:openai.OpenAI, model_name:str, message_history:list, auto_append:bool=True, chain:bool=False) -> str:
     """

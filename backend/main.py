@@ -50,7 +50,7 @@ CORS(app)  # Enable CORS for all routes
 )
 async def generate_graph_tool(query: str, style: str = None, data: dict = None) -> dict:
   
-    print(f"Generating graph with query: {query}")
+    print(f"Starting graph generation for: {query}")
     result = await generateGraph(query, style, data)
     print(f"Graph generation result: {result}")
     return result
@@ -69,9 +69,12 @@ async def generate_response_api():
     
     try:
         agentic_ai.append_to_history("user", query, chat_history)
-        response_text = await agentic_ai.generate_response(client, CHAT_MODEL, chat_history, chain=True)
-        response_text = response_text["text"].strip()
-        print("\n\n\t1123\t\t",response_text)
+        response = await agentic_ai.generate_response(client, CHAT_MODEL, chat_history, chain=True)
+        if isinstance(response, dict) and "text" in response:
+            response_text = response["text"].strip()
+        else:
+            print("\n\n\t1123\t\t", "Error: Unexpected response format")
+            return {"success": False, "messages": [{"type": 'text', "content": "An error occurred while processing your request"}]}, 500
         
         # Parse <image> tags to extract graph IDs
         result_parts = []
@@ -133,7 +136,10 @@ async def graph_llm_call(prompt:str):
             "\nReturn only the Python code with no additional statements or other info. Ensure the labels are visible properly and not overlapping. Make code minimal with no unnecessary lines."
         )
     agentic_ai.append_to_history("user", prompt, graph_history)
-    return await agentic_ai.generate_response(client, CODE_MODEL, graph_history)
+    response = await agentic_ai.generate_response(client, CODE_MODEL, graph_history)
+    if isinstance(response, dict) and "text" in response:
+        return response
+    return {"text": str(response)}
 
 chat_history=agentic_ai.initialize_message_history("You are a helpful AI assistant called GraphBot that can generate graphs and provide textual responses. "
         "Not every response needs a graph - only generate graphs when they add value to the response. "

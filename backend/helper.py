@@ -4,6 +4,24 @@ import base64
 import os
 import re
 import logging
+import agentic_ai
+from dotenv import load_dotenv
+from openai import OpenAI
+
+
+# Load environment variables from a .env file
+load_dotenv()
+
+# ------------------------------------------------------------------------------
+# Ensure you have set the appropriate API key in your environment variables.
+# ------------------------------------------------------------------------------
+LLM_API_KEY = os.getenv("LLM_API_KEY")
+LLM_API_URL = os.getenv("LLM_API_URL", "https://openrouter.ai/api/v1")
+CHAT_MODEL = os.getenv("CHAT_MODEL")
+CODE_MODEL = os.getenv("CODE_MODEL")
+
+
+client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_API_URL)
 
 logger = logging.getLogger(__name__)
 
@@ -58,7 +76,6 @@ def extract_figure_size(code: str) -> tuple[float, float] | None:
 async def generateGraph(query, style=None, data=None):
     fig = None
     try:
-        print(f"Generating graph for query: {query}")
         # Generate matplotlib code based on query
         prompt = f"Create a matplotlib graph for: {query}. You may specify figure size using plt.figure(figsize=(width, height)) if needed for optimal visualization."
         if data:
@@ -66,10 +83,24 @@ async def generateGraph(query, style=None, data=None):
         if style:
             prompt += f"\nStyle: {style}"
         
-        from main import graph_llm_call
-        response = await graph_llm_call(prompt)
-        print("\n\n\t\t112112\t\t",response)
-        generated_code = response.strip()
+        graph_history = agentic_ai.initialize_message_history("You are a Python code generator for matplotlib graphs. Generate clean, minimal code that: "
+            "1. Supported librarier: matplotlib; numpy; You cannot import or use any other libraries; "
+            "2. Sets appropriate labels and titles; "
+            "3. Uses a clear style and color scheme; "
+            "4. Uses the current axes (plt.gca()) for all plotting; "
+            "5. Does NOT create or close figures; "
+            "6. Properly scales axes and sets limits; "
+            "7. For 3D plots, use methods like plot3D(), scatter3D(), or set_zlabel() directly; "
+            "8. For polar plots, use polar-specific methods without setting projection."
+            "\nReturn only the Python code with no additional statements or other info. Ensure the labels are visible properly and not overlapping. Make code minimal with no unnecessary lines."
+        , tool_instructions="")
+        agentic_ai.append_to_history("user", prompt, graph_history)
+        response = await agentic_ai.generate_response(client, CODE_MODEL, graph_history)
+        print("====================================\n",response,"\n====================================")
+        if isinstance(response, dict) and "text" in response:
+            generated_code = response["text"].strip()
+        else:
+            generated_code = str(response).strip()
 
         # Remove markdown code block syntax if present
         generated_code = re.sub(r'^```[a-zA-Z]*\n*', '', generated_code)
@@ -82,65 +113,68 @@ async def generateGraph(query, style=None, data=None):
         # Validate and sanitize the code
         generated_code = sanitize_code(generated_code)
         
+        # Determine plot type from code
+        needs_3d = (
+            'set_zlabel' in generated_code or
+            'plot3D' in generated_code or
+            'scatter3D' in generated_code or
+            re.search(r'projection=[\'"]3d[\'"]', generated_code)
+        )
+        needs_polar = re.search(r'projection=[\'"]polar[\'"]', generated_code)
+        
+        # Use extracted size or fallback
+        final_figsize = figsize or determine_figure_size(style, needs_3d, needs_polar)
+        
+        # Create figure with appropriate subplot
+        fig = plt.figure(figsize=final_figsize)
+        
+        # Remove any plt.figure calls from generated code since we handle it
+        generated_code = re.sub(r'plt\.figure\([^)]*\)', '', generated_code)
+        
+        if needs_3d:
+            ax = fig.add_subplot(111, projection='3d')
+            generated_code = re.sub(r'plt\.gca\([^)]*\)', 'ax', generated_code)
+        elif needs_polar:
+            ax = fig.add_subplot(111, projection='polar')
+            generated_code = re.sub(r'plt\.gca\([^)]*\)', 'ax', generated_code)
+        else:
+            ax = fig.add_subplot(111)
+            generated_code = re.sub(r'plt\.gca\([^)]*\)', 'ax', generated_code)
+            
+        # Execute validated code in a restricted namespace
+        namespace = {
+            'plt': plt,
+            'np': __import__('numpy'),
+            'ax': ax
+        }
+        
         try:
-            # Determine plot type from code
-            needs_3d = (
-                'set_zlabel' in generated_code or
-                'plot3D' in generated_code or
-                'scatter3D' in generated_code or
-                re.search(r'projection=[\'"]3d[\'"]', generated_code)
-            )
-            needs_polar = re.search(r'projection=[\'"]polar[\'"]', generated_code)
-            
-            # Use extracted size or fallback
-            final_figsize = figsize or determine_figure_size(style, needs_3d, needs_polar)
-            
-            # Create figure with appropriate subplot
-            fig = plt.figure(figsize=final_figsize)
-            
-            # Remove any plt.figure calls from generated code since we handle it
-            generated_code = re.sub(r'plt\.figure\([^)]*\)', '', generated_code)
-            
-            if needs_3d:
-                ax = fig.add_subplot(111, projection='3d')
-                generated_code = re.sub(r'plt\.gca\([^)]*\)', 'ax', generated_code)
-            elif needs_polar:
-                ax = fig.add_subplot(111, projection='polar')
-                generated_code = re.sub(r'plt\.gca\([^)]*\)', 'ax', generated_code)
-            else:
-                ax = fig.add_subplot(111)
-                generated_code = re.sub(r'plt\.gca\([^)]*\)', 'ax', generated_code)
-                
-            # Execute validated code in a restricted namespace
-            namespace = {
-                'plt': plt,
-                'np': __import__('numpy'),
-                'ax': ax
-            }
             exec(generated_code, namespace)
-            
-            # Save the figure to a buffer
-            buf = io.BytesIO()
-            fig.savefig(buf, format='png', dpi=100, bbox_inches='tight')
-            buf.seek(0)
-            
-            # Generate unique identifier for this graph
-            image_id = base64.urlsafe_b64encode(os.urandom(12)).decode('ascii')
-            
-            # Save the image to a file using the image_id
-            os.makedirs('generated_graphs', exist_ok=True)
-            with open(f'generated_graphs/{image_id}.png', 'wb') as f:
-                f.write(buf.getvalue())
-            
-            buf.close()
-            
-            logger.info(f"Successfully generated graph with ID: {image_id}")
-            return {"success":True, "image_id":image_id}
-            
-        except Exception as e:
+        except BaseException as e:
             logger.error(f"Error executing graph code: {str(e)}")
-            return {"success":False, "error":f"Failed to generate graph: {str(e)}"}
+            raise RuntimeError(f"Failed to execute graph code: {str(e)}")
+            
+        # Save the figure to a buffer
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', dpi=100, bbox_inches='tight')
+        buf.seek(0)
+        
+        # Generate unique identifier for this graph
+        image_id = base64.urlsafe_b64encode(os.urandom(12)).decode('ascii')
+        
+        # Save the image to a file using the image_id
+        os.makedirs('generated_graphs', exist_ok=True)
+        with open(f'generated_graphs/{image_id}.png', 'wb') as f:
+            f.write(buf.getvalue())
+        
+        buf.close()
+        
+        logger.info(f"Successfully generated graph with ID: {image_id}")
+        return {"success": True, "image_id": image_id}
 
+    except (RuntimeError, ValueError) as e:
+        logger.error(f"Graph generation error: {str(e)}")
+        return {"success": False, "error": str(e)}
     except Exception as e:
         logger.error(f"Error in graph generation: {str(e)}")
         return {"success":False, "error":str(e)}

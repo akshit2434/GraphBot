@@ -163,14 +163,14 @@ async def call_tool(tool_name: str, args: dict) -> dict:
     # Execute the tool
     try:
         result = await tool_func(**args)
-        if "success" not in result.keys() or result.success == False:
-            return {
+        if "success" not in result or result["success"] == False:
+            return result
+        else:
+            {
                 "success": True,
                 "tool_name": tool_name,
                 "output": json.dumps(result)
             }
-        else:
-            return json.dumps(result)
     except Exception as e:
         return {
             "success": False,
@@ -209,7 +209,7 @@ async def call_tool_from_json(text:str|dict, history:dict, auto_append:bool=True
         
         tool_response = await call_tool(tool_name, arguments)
         if auto_append:
-            append_to_history("tool", await tool_response, history)
+            append_to_history("tool", tool_response, history)
         return tool_response
     except json.JSONDecodeError:
         return {

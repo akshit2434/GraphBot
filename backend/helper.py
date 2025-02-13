@@ -68,6 +68,7 @@ async def generateGraph(query, style=None, data=None):
         
         from main import graph_llm_call
         response = await graph_llm_call(prompt)
+        print("\n\n\t\t112112\t\t",response)
         generated_code = response.strip()
 
         # Remove markdown code block syntax if present

@@ -1,7 +1,22 @@
 import functools
+from pydantic import BaseModel
+from typing import Union
+import json
+import re
+from openai import OpenAI
 
 # Global dictionary to store tools
 TOOLS = {}
+
+# Define a structured response model for tool calling
+class ToolCall(BaseModel):
+    tool_name: str
+    arguments: dict
+
+# Define a flexible response model that can be either structured or plain text
+class ResponseModel(BaseModel):
+    data: Union[ToolCall, str]  # Can be structured data or plain text
+
 
 def register_tool(
     *,
@@ -83,26 +98,27 @@ def generate_system_prompt(prompt, tool_instructions: str = None):
         "\n\nYou can either call a tool, or respond to the user. If you want to call a tool, use the following format:\n\n"
         """
         {
-            "use_tool": {
-                "tool_name": "Name of the tool",
-                "arguments": {
-                    // Arguments in JSON format
-                }
+            "tool_name": "Name of the tool",
+            "arguments": {
+                // Arguments in JSON format
             }
         }
         
         Example tool call:
         {
-            "use_tool": {
-                "tool_name": "get_food_details_tool",
-                "arguments": {
-                    "query": "A sweet, soft-textured dish",
-                    "region": "Indian"
-                }
+            "tool_name": "get_food_details_tool",
+            "arguments": {
+                "query": "A sweet, soft-textured dish",
+                "region": "Indian"
             }
         }
         """
-        "If you want to respond to the user, simply provide the text response."
+        """If you want to respond to the user, simply provide the text response in the following format:
+        {
+            "text": "Your response goes here."
+        }
+        """
+        
     )
 
     return system_prompt
@@ -145,11 +161,115 @@ def call_tool(tool_name: str, args: dict) -> dict:
         result = tool_func(**args)
         return {
             "success": True,
-            "tool": tool_name,
-            "output": result
+            "tool_name": tool_name,
+            "output": json.dumps(result)
         }
     except Exception as e:
         return {
             "success": False,
-            "message": f"An error occurred while executing '{tool_name}': {str(e)}"
+            "tool_name": tool_name,
+            "error": f"An error occurred while executing '{tool_name}': {str(e)}"
         }
+
+def remove_markdown(text: str) -> str:
+    """Remove markdown syntax from the text."""
+    # Remove markdown code block syntax if present
+    text = re.sub(r'^```[a-zA-Z]*\n*', '', text)
+    text = re.sub(r'\n*```$', '', text)
+    text = text.strip()
+    return text
+
+def call_tool_from_json(text:str, history:dict, auto_append:bool=True) -> dict:
+    """
+    Calls a tool based on a JSON input.
+
+    Parameters:
+      text: JSON-formatted string containing tool name and arguments.
+        history: List of message dictionaries.
+        auto_append: Whether to automatically append the tool response to the history.
+
+    Returns:
+      A structured response (textual and JSON) that can be used by an LLM.
+    """
+    try:
+        remove_markdown(text)
+        data = json.loads(text)
+        tool_name = data.get("tool_name")
+        arguments = data.get("arguments", {})
+        
+        tool_response = call_tool(tool_name, arguments)
+        if auto_append:
+            append_to_history("tool",tool_response,history)
+        return tool_response
+    except json.JSONDecodeError:
+        return {
+            "success": False,
+            "error": "Error: Invalid JSON format. Please provide a valid JSON input."
+        }
+        
+from typing import Union
+
+def append_to_history(role: str, content: dict | str, history: list) -> list:
+    """
+    Append a message to the chat history.
+
+    Parameters:
+      role: Role of the message sender (user, assistant, system, tool).
+      content: Message content (text or structured data).
+      history: List of message dictionaries.
+    """
+    message = ""
+    if role=="tool":
+        role="user"
+        message+="Tool Output:\n"
+    
+    if content.keys() == {"text"}:    
+        content = content["text"]
+    
+    if type(content)==dict:
+        message+=json.dumps(content)
+    else:
+        message+=content
+    
+    history.append({"role": role, "content": message})
+    
+    return history
+    
+def initialize_message_history(system_prompt: str) -> list:
+    """
+    Initialize the message history with a system prompt.
+
+    Parameters:
+      system_prompt: The initial system prompt.
+
+    Returns:
+      A list containing the initial system prompt.
+    """
+    return [{"role": "system", "content": generate_system_prompt(system_prompt)}]
+
+def generate_response(client:OpenAI, model_name:str, message_history:list, auto_append:bool=True):
+    """
+    Generate a response using the specified model and message history.
+
+    Parameters:
+        client: The OpenAI client instance.
+        model_name: The name of the model to use for generating the response.
+        message_history: List of message dictionaries.
+        auto_append: Whether to automatically append the response to the history.
+
+    Returns:
+        The generated response text.
+    """
+    response = client.chat.completions.create(
+        model=model_name,
+        messages=message_history
+    )
+    
+    #Add error / ratelimit verification etc
+    
+    output=remove_markdown(response.choices[0].message.content)
+    if auto_append:
+        append_to_history("assistant",output,message_history)
+    
+    return output
+    

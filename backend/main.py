@@ -1,32 +1,23 @@
 import os
 import json
-import openai
-from pydantic import BaseModel, ValidationError
+from pydantic import BaseModel
 from typing import Dict, Any
 import agentic_ai
+from openai import OpenAI
+from dotenv import load_dotenv
+
+# Load environment variables from a .env file
+load_dotenv()
 
 # ------------------------------------------------------------------------------
-# Configuration: Choose the API base.
-# Set USE_OPENROUTER = True to use OpenRouter's API; otherwise, use OpenAI's default.
 # Ensure you have set the appropriate API key in your environment variables.
 # ------------------------------------------------------------------------------
-openai.api_key = os.getenv("LLM_API_KEY")
-openai.api_base = os.getenv("LLM_API_URL", "https://openrouter.ai/api/v1")
+LLM_API_KEY = os.getenv("LLM_API_KEY")
+LLM_API_URL = os.getenv("LLM_API_URL", "https://openrouter.ai/api/v1")
+CHAT_MODEL = os.getenv("CHAT_MODEL")
 
-
-# ------------------------------------------------------------------------------
-# Define a Pydantic model to enforce the expected structured output.
-# ------------------------------------------------------------------------------
-class ToolCall(BaseModel):
-    tool: str
-    arguments: Dict[str, Any]
-
-class GraphToolResponse(BaseModel):
-    success: bool
-    imageID: str
-
-class RespondOutput(BaseModel):
-    text: str
+# Configure the llm model
+client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_API_URL)
 
 # Define tools using the decorator
 @agentic_ai.register_tool(
@@ -40,17 +31,23 @@ class RespondOutput(BaseModel):
         "PPP: number; price per piece."
     ),
     example_in='{"query":"A sweet, soft-textured dish","region":"Indian"}',
-    # example_out='{"name":"Gulab Jamun", "PPP":0.2}'
 )
 def get_food_details(query: str, region: str) -> dict:
-    """Returns food item details based on the query and region."""
     return {"name": "Gulab Jamun", "PPP": 0.2}
 
 
 # Generate tool instructions
-print("=== Tool Instructions ===")
-print(agentic_ai.generate_tool_instructions())
+message_history = agentic_ai.initialize_message_history("You are an expert chef with mastery food related maters.")
 
-# Call a tool dynamically
-print("=== Calling 'get_recipe' ===")
-print(agentic_ai.call_tool("get_food_details", {"dish": "Lasagna"}))
+agentic_ai.append_to_history("user","what indian desert is soft and sweet?", message_history)
+assistant_reply = agentic_ai.generate_response(client, CHAT_MODEL, message_history)
+
+# Call the tool
+tool_output = agentic_ai.call_tool_from_json(assistant_reply, message_history)
+
+
+# Final call to generate reply
+final_reply = agentic_ai.generate_response(client, CHAT_MODEL, message_history)
+
+print("Message history:", message_history[1:])
+

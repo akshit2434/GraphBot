@@ -8,46 +8,36 @@ import agentic_ai
 from dotenv import load_dotenv
 from openai import OpenAI
 
-
-# Load environment variables from a .env file
+# Load environment variables
 load_dotenv()
-
-# ------------------------------------------------------------------------------
-# Ensure you have set the appropriate API key in your environment variables.
-# ------------------------------------------------------------------------------
 LLM_API_KEY = os.getenv("LLM_API_KEY")
 LLM_API_URL = os.getenv("LLM_API_URL", "https://openrouter.ai/api/v1")
-CHAT_MODEL = os.getenv("CHAT_MODEL")
 CODE_MODEL = os.getenv("CODE_MODEL")
 
-
+# Initialize OpenAI client
 client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_API_URL)
 
 logger = logging.getLogger(__name__)
 
 def sanitize_code(code: str) -> str:
     """Sanitize and validate the generated Python code"""
-    try:
-        forbidden_imports = ['os', 'sys', 'subprocess', 'eval', 'exec']
-        forbidden_commands = ['plt.close', 'plt.show']  # Allow plt.figure for size control
-        code_lines = code.split('\n')
-        
-        code_lines = [line for line in code_lines if not any(cmd in line for cmd in forbidden_commands)]
-        
-        for line in code_lines:
-            for forbidden in forbidden_imports:
-                if f"import {forbidden}" in line or f"from {forbidden}" in line:
-                    logger.warning(f"Forbidden import detected: {forbidden}")
-                    raise ValueError(f"Forbidden import detected: {forbidden}")
-                    
-            if any(dangerous_func in line for dangerous_func in ['eval', 'exec', 'open']):
-                logger.warning("Potentially dangerous function call detected")
-                raise ValueError("Potentially dangerous function calls detected")
-        
-        return "\n".join(code_lines)
-    except Exception as e:
-        logger.error(f"Code sanitization failed: {str(e)}")
-        raise
+    forbidden_imports = ['os', 'sys', 'subprocess', 'eval', 'exec']
+    forbidden_commands = ['plt.close', 'plt.show']  # Allow plt.figure for size control
+    code_lines = code.split('\n')
+    
+    code_lines = [line for line in code_lines if not any(cmd in line for cmd in forbidden_commands)]
+    
+    for line in code_lines:
+        for forbidden in forbidden_imports:
+            if f"import {forbidden}" in line or f"from {forbidden}" in line:
+                logger.warning(f"Forbidden import detected: {forbidden}")
+                raise RuntimeError(f"Forbidden import detected: {forbidden}")
+                
+        if any(dangerous_func in line for dangerous_func in ['eval', 'exec', 'open']):
+            logger.warning("Potentially dangerous function call detected")
+            raise RuntimeError("Potentially dangerous function calls detected")
+    
+    return "\n".join(code_lines)
 
 def determine_figure_size(style=None, needs_3d=False, needs_polar=False):
     """Determine fallback figure size based on plot type and style"""
@@ -63,15 +53,20 @@ def determine_figure_size(style=None, needs_3d=False, needs_polar=False):
 
 def extract_figure_size(code: str) -> tuple[float, float] | None:
     """Extract figure size from matplotlib code if specified"""
-    size_match = re.search(r'plt\.figure\(.*?figsize=\(([\d.]+),\s*([\d.]+)\)', code)
-    if size_match:
-        try:
-            width = float(size_match.group(1))
-            height = float(size_match.group(2))
-            return (width, height)
-        except (ValueError, IndexError):
-            return None
-    return None
+    try:
+        size_match = re.search(r'plt\.figure\(.*?figsize=\(([\d.]+),\s*([\d.]+)\)', code)
+        if size_match:
+            try:
+                width = float(size_match.group(1))
+                height = float(size_match.group(2))
+                return (width, height)
+            except (ValueError, IndexError) as e:
+                logger.warning(f"Failed to parse figure size: {e}")
+                return None
+        return None
+    except Exception as e:
+        logger.warning(f"Error in figure size extraction: {e}")
+        return None
 
 async def generateGraph(query, style=None, data=None):
     fig = None
@@ -82,8 +77,10 @@ async def generateGraph(query, style=None, data=None):
             prompt += f"\nData: {data}"
         if style:
             prompt += f"\nStyle: {style}"
-        
-        graph_history = agentic_ai.initialize_message_history("You are a Python code generator for matplotlib graphs. Generate clean, minimal code that: "
+        print("Hey1")
+        # Create graph LLM code generation instance
+        graph_history = agentic_ai.initialize_message_history(
+            "You are a Python code generator for matplotlib graphs. Generate clean, minimal code that: "
             "1. Supported librarier: matplotlib; numpy; You cannot import or use any other libraries; "
             "2. Sets appropriate labels and titles; "
             "3. Uses a clear style and color scheme; "
@@ -94,8 +91,10 @@ async def generateGraph(query, style=None, data=None):
             "8. For polar plots, use polar-specific methods without setting projection."
             "\nReturn only the Python code with no additional statements or other info. Ensure the labels are visible properly and not overlapping. Make code minimal with no unnecessary lines."
         , tool_instructions="")
+        print("Hey2")
         agentic_ai.append_to_history("user", prompt, graph_history)
         response = await agentic_ai.generate_response(client, CODE_MODEL, graph_history)
+        print("\nLLM Response:", response, "\n")
         print("====================================\n",response,"\n====================================")
         if isinstance(response, dict) and "text" in response:
             generated_code = response["text"].strip()

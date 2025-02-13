@@ -122,24 +122,6 @@ def handle_error(error):
         "details": str(error) if app.debug else "Please check server logs for details"
     }), 500
     
-async def graph_llm_call(prompt:str):
-    # Create the graph agent for code generation
-    graph_history = agentic_ai.initialize_message_history("You are a Python code generator for matplotlib graphs. Generate clean, minimal code that: "
-            "1. Supported librarier: matplotlib; numpy; You cannot import or use any other libraries; "
-            "2. Sets appropriate labels and titles; "
-            "3. Uses a clear style and color scheme; "
-            "4. Uses the current axes (plt.gca()) for all plotting; "
-            "5. Does NOT create or close figures; "
-            "6. Properly scales axes and sets limits; "
-            "7. For 3D plots, use methods like plot3D(), scatter3D(), or set_zlabel() directly; "
-            "8. For polar plots, use polar-specific methods without setting projection."
-            "\nReturn only the Python code with no additional statements or other info. Ensure the labels are visible properly and not overlapping. Make code minimal with no unnecessary lines."
-        )
-    agentic_ai.append_to_history("user", prompt, graph_history)
-    response = await agentic_ai.generate_response(client, CODE_MODEL, graph_history)
-    if isinstance(response, dict) and "text" in response:
-        return response
-    return {"text": str(response)}
 
 chat_history=agentic_ai.initialize_message_history("You are a helpful AI assistant called GraphBot that can generate graphs and provide textual responses. "
         "Not every response needs a graph - only generate graphs when they add value to the response. "

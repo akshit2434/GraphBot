@@ -3,7 +3,7 @@ from pydantic import BaseModel
 from typing import Union
 import json
 import re
-from openai import OpenAI
+import openai
 
 # Global dictionary to store tools
 TOOLS = {}
@@ -247,7 +247,7 @@ def initialize_message_history(system_prompt: str) -> list:
     """
     return [{"role": "system", "content": generate_system_prompt(system_prompt)}]
 
-def generate_response(client:OpenAI, model_name:str, message_history:list, auto_append:bool=True):
+def generate_response(client:openai.OpenAI, model_name:str, message_history:list, auto_append:bool=True):
     """
     Generate a response using the specified model and message history.
 
@@ -260,16 +260,36 @@ def generate_response(client:OpenAI, model_name:str, message_history:list, auto_
     Returns:
         The generated response text.
     """
-    response = client.chat.completions.create(
-        model=model_name,
-        messages=message_history
-    )
-    
-    #Add error / ratelimit verification etc
-    
-    output=remove_markdown(response.choices[0].message.content)
-    if auto_append:
-        append_to_history("assistant",output,message_history)
+    # Execute the API request with error handling and standard error codes
+    try:
+        response = client.chat.completions.create(
+            model=model_name,
+            messages=message_history
+        )
+        output=remove_markdown(response.choices[0].message.content)
+        if auto_append:
+            append_to_history("assistant",output,message_history)
+        return output
+    except openai.error.RateLimitError as e:
+        output = "Error:429 - Rate limit exceeded. Please try again later."
+    except openai.error.APIError as e:
+        output = "Error:500 - API returned an error. Please check your request."
+    except openai.error.Timeout as e:
+        output = "Error:504 - Request timed out."
+    except openai.error.ServiceUnavailableError as e:
+        output = "Error:503 - Service is currently unavailable. Please try again later."
+    except openai.error.APIConnectionError as e:
+        output = "Error:503 - Failed to connect to the API. Please check your network connection."
+    except openai.error.InvalidRequestError as e:
+        output = "Error:400 - Invalid request parameters. Please verify your input."
+    except openai.error.AuthenticationError as e:
+        output = "Error:401 - Authentication failed. Please check your API key."
+    except openai.error.PermissionError as e:
+        output = "Error:403 - You do not have permission to access this model."
+    except Exception as e:
+        output = "Error:500 - An unexpected error occurred."
     
     return output
+    
+    
     

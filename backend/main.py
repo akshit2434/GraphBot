@@ -73,7 +73,6 @@ async def generate_response_api():
         if isinstance(response, dict) and "text" in response:
             response_text = response["text"].strip()
         else:
-            print("\n\n\t1123\t\t", "Error: Unexpected response format")
             return {"success": False, "messages": [{"type": 'text', "content": "An error occurred while processing your request"}]}, 500
         
         # Parse <image> tags to extract graph IDs

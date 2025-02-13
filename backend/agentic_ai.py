@@ -194,24 +194,22 @@ def remove_markdown(text: str) -> str:
     text = text.strip()
     return text
 
-async def call_tool_from_json(text:str|dict, history:dict, auto_append:bool=True) -> dict:
+async def call_tool_from_json(data:str|dict, history:dict, auto_append:bool=True) -> dict:
     """
     Calls a tool based on a JSON input.
 
     Parameters:
-      text: JSON-formatted string containing tool name and arguments.
-        history: List of message dictionaries.
+      data: JSON or dict input containing the tool name and arguments.
+      history: List of message dictionaries.
         auto_append: Whether to automatically append the tool response to the history.
 
     Returns:
       A structured response (textual and JSON) that can be used by an LLM.
     """
     try:
-        if type(text)==str:
-            remove_markdown(text)
-            data = json.loads(text)
-        else:
-            data = text
+        if type(data)==str:
+            remove_markdown(data)
+            data = json.loads(data)
         tool_name = data.get("tool_name")
         arguments = data.get("arguments", {})
         
@@ -250,7 +248,6 @@ def append_to_history(role: str, content: dict | str, history: list) -> list:
         message+=content
     
     history.append({"role": role, "content": message})
-    
     return history
     
 def initialize_message_history(system_prompt: str, tool_instructions:str = None) -> list:
@@ -280,17 +277,21 @@ async def generate_response(client:openai.OpenAI, model_name:str, message_histor
     Returns:
         The generated response text.
     """
-    print("\n\t\t", message_history[1:])
     # Execute the API request with error handling and standard error codes
     try:
         response = client.chat.completions.create(
             model=model_name,
             messages=message_history
         )
-        output=remove_markdown(response.choices[0].message.content)
-        if len(output)==0:
+        
+        output = response.choices[0].message.content
+        output_clean=remove_markdown(output)
+        if len(output_clean)==0:
             return False
-        output = json.loads(output)
+        try:
+            output = json.loads(output_clean)
+        except:
+            output = {"text":output}
         
         if auto_append:
             append_to_history("assistant",output,message_history)

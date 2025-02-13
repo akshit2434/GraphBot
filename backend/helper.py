@@ -7,6 +7,7 @@ import logging
 import agentic_ai
 from dotenv import load_dotenv
 from openai import OpenAI
+from agentic_ai import remove_markdown
 
 # Load environment variables
 load_dotenv()
@@ -77,7 +78,6 @@ async def generateGraph(query, style=None, data=None):
             prompt += f"\nData: {data}"
         if style:
             prompt += f"\nStyle: {style}"
-        print("Hey1")
         # Create graph LLM code generation instance
         graph_history = agentic_ai.initialize_message_history(
             "You are a Python code generator for matplotlib graphs. Generate clean, minimal code that: "
@@ -91,20 +91,11 @@ async def generateGraph(query, style=None, data=None):
             "8. For polar plots, use polar-specific methods without setting projection."
             "\nReturn only the Python code with no additional statements or other info. Ensure the labels are visible properly and not overlapping. Make code minimal with no unnecessary lines."
         , tool_instructions="")
-        print("Hey2")
         agentic_ai.append_to_history("user", prompt, graph_history)
-        response = await agentic_ai.generate_response(client, CODE_MODEL, graph_history)
-        print("\nLLM Response:", response, "\n")
-        print("====================================\n",response,"\n====================================")
+        response = await agentic_ai.generate_response(client, CODE_MODEL, graph_history, False)
+        
         if isinstance(response, dict) and "text" in response:
-            generated_code = response["text"].strip()
-        else:
-            generated_code = str(response).strip()
-
-        # Remove markdown code block syntax if present
-        generated_code = re.sub(r'^```[a-zA-Z]*\n*', '', generated_code)
-        generated_code = re.sub(r'\n*```$', '', generated_code)
-        generated_code = generated_code.strip()
+            generated_code = remove_markdown(response["text"].strip())
 
         # Extract figure size before sanitization
         figsize = extract_figure_size(generated_code)

@@ -123,7 +123,7 @@ def generate_system_prompt(prompt, tool_instructions: str = None):
 
     return system_prompt
 
-def call_tool(tool_name: str, args: dict) -> dict:
+async def call_tool(tool_name: str, args: dict) -> dict:
     """
     Calls a registered tool dynamically.
 
@@ -145,7 +145,11 @@ def call_tool(tool_name: str, args: dict) -> dict:
     tool_func = tool_metadata["function"]
 
     # Validate missing arguments
-    expected_args = [arg.split(":")[0].strip() for arg in tool_metadata["arguments"].split("\n")]
+    expected_args = [
+        arg.split(":")[0].strip()
+        for arg in tool_metadata["arguments"].split("\n")
+        if "optional" not in arg.split(":")[0].lower()
+    ]
     missing_args = [arg for arg in expected_args if arg not in args]
 
     if missing_args:
@@ -158,12 +162,15 @@ def call_tool(tool_name: str, args: dict) -> dict:
 
     # Execute the tool
     try:
-        result = tool_func(**args)
-        return {
-            "success": True,
-            "tool_name": tool_name,
-            "output": json.dumps(result)
-        }
+        result = await tool_func(**args)
+        if "success" not in result.keys() or result.success == False:
+            return {
+                "success": True,
+                "tool_name": tool_name,
+                "output": json.dumps(result)
+            }
+        else:
+            return json.dumps(result)
     except Exception as e:
         return {
             "success": False,
@@ -179,7 +186,7 @@ def remove_markdown(text: str) -> str:
     text = text.strip()
     return text
 
-def call_tool_from_json(text:str, history:dict, auto_append:bool=True) -> dict:
+async def call_tool_from_json(text:str|dict, history:dict, auto_append:bool=True) -> dict:
     """
     Calls a tool based on a JSON input.
 
@@ -192,14 +199,17 @@ def call_tool_from_json(text:str, history:dict, auto_append:bool=True) -> dict:
       A structured response (textual and JSON) that can be used by an LLM.
     """
     try:
-        remove_markdown(text)
-        data = json.loads(text)
+        if type(text)==str:
+            remove_markdown(text)
+            data = json.loads(text)
+        else:
+            data = text
         tool_name = data.get("tool_name")
         arguments = data.get("arguments", {})
         
-        tool_response = call_tool(tool_name, arguments)
+        tool_response = await call_tool(tool_name, arguments)
         if auto_append:
-            append_to_history("tool",tool_response,history)
+            append_to_history("tool", await tool_response, history)
         return tool_response
     except json.JSONDecodeError:
         return {
@@ -223,7 +233,7 @@ def append_to_history(role: str, content: dict | str, history: list) -> list:
         role="user"
         message+="Tool Output:\n"
     
-    if content.keys() == {"text"}:    
+    if type(content)==dict and content.keys() == {"text"}:    
         content = content["text"]
     
     if type(content)==dict:
@@ -247,7 +257,7 @@ def initialize_message_history(system_prompt: str) -> list:
     """
     return [{"role": "system", "content": generate_system_prompt(system_prompt)}]
 
-def generate_response(client:openai.OpenAI, model_name:str, message_history:list, auto_append:bool=True):
+async def generate_response(client:openai.OpenAI, model_name:str, message_history:list, auto_append:bool=True, chain:bool=False) -> str:
     """
     Generate a response using the specified model and message history.
 
@@ -256,35 +266,52 @@ def generate_response(client:openai.OpenAI, model_name:str, message_history:list
         model_name: The name of the model to use for generating the response.
         message_history: List of message dictionaries.
         auto_append: Whether to automatically append the response to the history.
+        chain: Whether to continue generating responses until a text response is obtained.
 
     Returns:
         The generated response text.
     """
+    print("\n\t\t", message_history[1:])
     # Execute the API request with error handling and standard error codes
     try:
-        response = client.chat.completions.create(
+        response = await client.chat.completions.create(
             model=model_name,
             messages=message_history
         )
         output=remove_markdown(response.choices[0].message.content)
+        if len(output)==0:
+            return False
+        output = json.loads(output)
+        
         if auto_append:
             append_to_history("assistant",output,message_history)
+        
+        if chain:
+            while not list(output.keys()) == ["text"]:
+                if "tool_name" in output.keys():
+                    await call_tool_from_json(output, message_history)
+                output2 = await generate_response(client, model_name, message_history, True, True)
+                if output2==output:
+                    return output
+                if list(output.keys()) == ["text"]:
+                    return output2
+                output=output2
         return output
-    except openai.error.RateLimitError as e:
+    except openai.RateLimitError as e:
         output = "Error:429 - Rate limit exceeded. Please try again later."
-    except openai.error.APIError as e:
+    except openai.APIError as e:
         output = "Error:500 - API returned an error. Please check your request."
-    except openai.error.Timeout as e:
+    except openai.Timeout as e:
         output = "Error:504 - Request timed out."
-    except openai.error.ServiceUnavailableError as e:
+    except openai.ServiceUnavailableError as e:
         output = "Error:503 - Service is currently unavailable. Please try again later."
-    except openai.error.APIConnectionError as e:
+    except openai.APIConnectionError as e:
         output = "Error:503 - Failed to connect to the API. Please check your network connection."
-    except openai.error.InvalidRequestError as e:
+    except openai.InvalidRequestError as e:
         output = "Error:400 - Invalid request parameters. Please verify your input."
-    except openai.error.AuthenticationError as e:
+    except openai.AuthenticationError as e:
         output = "Error:401 - Authentication failed. Please check your API key."
-    except openai.error.PermissionError as e:
+    except openai.PermissionError as e:
         output = "Error:403 - You do not have permission to access this model."
     except Exception as e:
         output = "Error:500 - An unexpected error occurred."

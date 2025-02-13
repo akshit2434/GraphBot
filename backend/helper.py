@@ -4,7 +4,6 @@ import base64
 import os
 import re
 import logging
-from models import GraphResponse
 
 logger = logging.getLogger(__name__)
 
@@ -67,9 +66,9 @@ async def generateGraph(query, style=None, data=None):
         if style:
             prompt += f"\nStyle: {style}"
         
-        from backend.main2 import graph_agent
-        response = await graph_agent.run(prompt)
-        generated_code = response.data.strip()
+        from main import graph_llm_call
+        response = await graph_llm_call(prompt)
+        generated_code = response.strip()
 
         # Remove markdown code block syntax if present
         generated_code = re.sub(r'^```[a-zA-Z]*\n*', '', generated_code)
@@ -135,15 +134,15 @@ async def generateGraph(query, style=None, data=None):
             buf.close()
             
             logger.info(f"Successfully generated graph with ID: {image_id}")
-            return GraphResponse(success=True, image_id=image_id)
+            return {"success":True, "image_id":image_id}
             
         except Exception as e:
             logger.error(f"Error executing graph code: {str(e)}")
-            return GraphResponse(success=False, error=f"Failed to generate graph: {str(e)}")
+            return {"success":False, "error":f"Failed to generate graph: {str(e)}"}
 
     except Exception as e:
         logger.error(f"Error in graph generation: {str(e)}")
-        return GraphResponse(success=False, error=str(e))
+        return {"success":False, "error":str(e)}
         
     finally:
         # Clean up the figure

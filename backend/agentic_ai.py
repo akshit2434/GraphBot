@@ -274,7 +274,7 @@ async def generate_response(client:openai.OpenAI, model_name:str, message_histor
     print("\n\t\t", message_history[1:])
     # Execute the API request with error handling and standard error codes
     try:
-        response = await client.chat.completions.create(
+        response = client.chat.completions.create(
             model=model_name,
             messages=message_history
         )

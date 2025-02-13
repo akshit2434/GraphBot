@@ -67,7 +67,7 @@ async def generateGraph(query, style=None, data=None):
         if style:
             prompt += f"\nStyle: {style}"
         
-        from main import graph_agent
+        from backend.main2 import graph_agent
         response = await graph_agent.run(prompt)
         generated_code = response.data.strip()
 

@@ -4,9 +4,10 @@ matplotlib.use('Agg')
 
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-from datetime import datetime
+from datetime import datetime, timedelta
 import traceback
 import os
+import secrets
 from dotenv import load_dotenv
 from helper import generateGraph
 import agentic_ai
@@ -27,10 +28,9 @@ CODE_MODEL = os.getenv("CODE_MODEL")
 client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_API_URL)
 
 
-
-
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app, supports_credentials=True)  # Enable CORS with credentials support
+app.config['SECRET_KEY'] = secrets.token_hex(32)  # For secure session handling
 
 # Register graph generation tool with chat agent
 @agentic_ai.register_tool(
@@ -55,11 +55,22 @@ async def generate_graph_tool(query: str, style: str = None, data: dict = None) 
     print(f"Graph generation result: {result}")
     return result
 
+@app.route('/get_session', methods=['GET'])
+def get_session():
+    """Generate a new session ID for the client"""
+    session_id = secrets.token_urlsafe(32)
+    return jsonify({"session_id": session_id})
+
 @app.route('/generate_response', methods=['POST'])
 async def generate_response_api():
     req_id = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
     print(f"Request {req_id}: Received new request")
     
+    # Require session_id in request
+    session_id = request.json.get('session_id')
+    if not session_id:
+        return jsonify({"error": "Session ID is required"}), 400
+        
     query = request.json.get('query')
     if not query:
         print(f"Request {req_id}: Missing query parameter")
@@ -68,8 +79,11 @@ async def generate_response_api():
     print(f"Request {req_id}: Processing query: {query}")
     
     try:
-        agentic_ai.append_to_history("user", query, chat_history)
-        response = await agentic_ai.generate_response(client, CHAT_MODEL, chat_history, chain=True)
+        # Get or create chat history for this session
+        user_chat_history = get_chat_history(session_id)
+        
+        agentic_ai.append_to_history("user", query, user_chat_history)
+        response = await agentic_ai.generate_response(client, CHAT_MODEL, user_chat_history, chain=True)
         if isinstance(response, dict) and "text" in response:
             response_text = response["text"].strip()
         else:
@@ -122,13 +136,21 @@ def handle_error(error):
     }), 500
     
 
-chat_history=agentic_ai.initialize_message_history("You are a helpful AI assistant called GraphBot that can generate graphs and provide textual responses. "
+# Dictionary to store chat histories for each user session
+chat_histories = {}
+
+# Initialize system prompt
+SYSTEM_PROMPT = ("You are a helpful AI assistant called GraphBot that can generate graphs and provide textual responses. "
         "Not every response needs a graph - only generate graphs when they add value to the response. "
         "You can only respond in textual format and dont have the ability to generate images yourself. Use suitable tools for generating whatever is required. "
         "To respond with any image, mention it using the format <image>imageID</image> in the text response."
     )
 
-
+def get_chat_history(session_id: str):
+    """Get or create chat history for a user session"""
+    if session_id not in chat_histories:
+        chat_histories[session_id] = agentic_ai.initialize_message_history(SYSTEM_PROMPT)
+    return chat_histories[session_id]
 
 if __name__ == "__main__":
     print("Starting server with Agg backend...")

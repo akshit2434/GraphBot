@@ -6,23 +6,38 @@ const ChatBox = () => {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [sessionId, setSessionId] = useState(null);
     const messagesEndRef = useRef(null);
+
+    const getNewSession = async () => {
+        try {
+            const response = await fetch('http://localhost:5001/get_session');
+            const data = await response.json();
+            setSessionId(data.session_id);
+        } catch (error) {
+            console.error('Failed to get session ID:', error);
+        }
+    };
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     };
 
     useEffect(() => {
+        if (!sessionId) {
+            getNewSession();
+        }
         scrollToBottom();
-    }, [messages]);
+    }, [messages, sessionId]);
 
     const handleClearChat = () => {
         setMessages([]);
+        getNewSession(); // Get new session when clearing chat
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!input.trim()) return;
+        if (!input.trim() || !sessionId) return;
 
         const userMessage = input.trim();
         setInput('');
@@ -35,7 +50,10 @@ const ChatBox = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ query: userMessage }),
+                body: JSON.stringify({
+                    query: userMessage,
+                    session_id: sessionId
+                }),
             });
 
             if (!response.ok) {

@@ -54,7 +54,7 @@ def register_tool(
         return wrapper
     return decorator
 
-def generate_tool_instructions(*tool_names):
+def generate_tool_instructions(tool_names: list[str] = None):
     """
     Generates formatted tool descriptions for given tools.
     If no tool names are provided, it generates instructions for all.
@@ -79,7 +79,7 @@ def generate_tool_instructions(*tool_names):
 
     return tool_info
 
-def generate_system_prompt(prompt, tool_instructions: str = None):
+def generate_system_prompt(prompt, tool_instructions: str|list[str] = None):
     """
     Generates a system prompt with tool instructions.
 
@@ -91,7 +91,12 @@ def generate_system_prompt(prompt, tool_instructions: str = None):
     Returns:
         - A system prompt string with tool instructions.
     """
-    tool_instructions = tool_instructions or generate_tool_instructions()
+    if type(tool_instructions)==list and len(tool_instructions)>0:
+            tool_instructions = generate_tool_instructions(tool_instructions)
+    else:
+        if tool_instructions==None:
+            tool_instructions = generate_tool_instructions()
+
     if not tool_instructions or len(tool_instructions) == 0:
         system_prompt = f"{prompt}\n\n"
         """
@@ -99,6 +104,7 @@ def generate_system_prompt(prompt, tool_instructions: str = None):
         {
             "text": "Your response goes here."
         }\n
+        After responding to the user, you cannot call a tool again until the next user prompt. Thus dont respond to the user unless you have finished your task
         """
     system_prompt = (
         prompt + "\n\n" +
@@ -125,6 +131,8 @@ def generate_system_prompt(prompt, tool_instructions: str = None):
         {
             "text": "Your response goes here."
         }
+        
+        After responding to the user, you cannot call a tool again until the next user prompt. Thus dont respond to the user unless you have finished your task
         """
         
     )

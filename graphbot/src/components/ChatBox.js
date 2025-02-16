@@ -64,8 +64,8 @@ const ChatBox = () => {
 
             if (data.success) {
                 data.messages.forEach(part => {
-                    if (part.type === 'text') {
-                        setMessages(prev => [...prev, { text: part.content, type: 'bot' }]);
+                    if (part.type === 'text' && part.content.trim()) {
+                        setMessages(prev => [...prev, { text: part.content.trim(), type: 'bot' }]);
                     } else if (part.type === 'graph') {
                         setMessages(prev => [...prev, { type: 'bot-image', imageId: part.content }]);
                     }

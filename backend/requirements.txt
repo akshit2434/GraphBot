@@ -1,7 +1,9 @@
-pydantic-ai
 pydantic
 python-dotenv
 matplotlib
 numpy
 Flask
 flask-cors
+langchain
+langchain_core
+langchain_openai

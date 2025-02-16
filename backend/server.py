@@ -148,10 +148,10 @@ messages.append(HumanMessage(user_input))
 while True:
     ai_msg = llm_with_tools.invoke(messages)
     messages.append(ai_msg)
-    # print(ai_msg, getattr(ai_msg['additional_kwargs'].keys(), "additional_kwargs", []),'\n\n11\n\n', getattr(ai_msg, "tool_calls", []),'\n\n22\n\n', getattr(getattr(ai_msg, "additional_kwargs", []), "tool_calls", []))
+
     # Debugging: Check if tool_calls exist
-    tool_calls = dict(ai_msg)['additional_kwargs'].get("tool_calls", [])
-    print("Tool calls found:", tool_calls)
+    tool_calls = getattr(ai_msg, "tool_calls", [])
+    # print("Tool calls found:", tool_calls)
 
     # Process tool calls if any exist
     for call in tool_calls:
@@ -164,7 +164,7 @@ while True:
 
     # If no tool was invoked, print response and ask for user input
     if not tool_calls:
-        print(ai_msg)
+        print(ai_msg.content)
         user_input = input("\tYour Response: ")
         if user_input.lower() == "exit":
             for message in messages:
